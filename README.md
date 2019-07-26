@@ -1,6 +1,11 @@
 首先我是参考的一位大佬的github,这里给出连接，感谢他
 https://github.com/Snailclimb/JavaGuide
 然后觉得有一些没有概括到，把增加的内容补充在这里
+## java源码
+1.string为什么被设计为final类的？
+首先final表示为不可变，并不是指的是字符串值不可变，可变的是字符串的引用，当string str="jfjs"其实在常量池中开辟一块存放后边的值，str指向该值。
+被设计为final出于以下3点考虑：1.要存放在常量池中，为什么要有常量池？相同的字符串存放在常量池给堆节省很多空间2.保证了多线程安全，假设像数据库密码或端口号一类的字符串可被修改，会导致很多问题3.保证了hashcode不变。在创建时string的hashcode就被缓存了，那么在计算的时候不需要重新计算，大大提升了执行效率
+string.intern：若字符串存在返回常量池的引用。否则创建并返回引用。
 
 ## Redis
 1 如何保证高可用？
@@ -32,11 +37,14 @@ https://github.com/Snailclimb/JavaGuide
 publisher确认机制，2种方式
 - 通过AMQP事务机制实现(3个方法)：txSelect用于将当前channel设置成transaction模式，txCommit用于提交事务，txRollback用于回滚事务，在通过txSelect开启事务之后，我们便可以发布消息给broker代理服务器了，如果txCommit提交成功了，则消息一定到达了broker了，如果在txCommit执行之前broker异常崩溃或者由于其他原因抛出异常，这个时候我们便可以捕获异常通过txRollback回滚事务了。
 - 通过将channel设置成confirm模式来实现：生产者将channel设置成confirm模式，一旦channel进入confirm模式，所有在该channel上面发布的消息都会被指派一个唯一的ID(Correlation Id从1开始)，一旦消息被投递到所有匹配的队列之后，broker就会发送一个确认给生产者（包含消息的唯一ID）,这就使得生产者知道消息已经正确到达目的队列了，如果消息和队列是可持久化的，那么确认消息会将消息写入磁盘之后发出，broker回传给生产者的确认消息中deliver-tag域包含了确认消息的序列号，此外broker也可以设置basic.ack的multiple域，表示到这个序列号之前的所有消息都已经得到了处理。异步 的方式
+## 设计模式
+1.简单工厂模式：将对象的创建推迟到工厂中，如：有个shape接口，有rectangle,circle实现了这个接口，有个shapefactory类，当需要创建实例对象的调用shapefactory类的create方法，传入参数用于表示创建什么实例对象，根据这个参数创建对象。好处：将创建对象的放到工厂类中创建，解耦。
+工厂方法模式：同样也是将对象的创建推迟到工厂中，只是有个factory接口， 要创建对应对象的工厂类并实现factory接口，如创建rectangle用rectanglefactory类，创建circle用circleFactory类。想要新增一个图形star,要先创建star类实现shape接口，然后创建starfactory实现factory接口。
+抽象工厂模式：增加了产品族的概念，如：要实现一个red的circle的实例,先创建shape接口和color接口，再创建circle实现shape接口以及red实现color接口，接着创建factory接口，redcirclefactory实现factory接口，他有2个方法分别是create和colored,用redcircle初始化完成。好处：提供了一个更加复杂的产品的构造。
 
 ## Linux文件系统
 - 
 还没弄清楚的问题
-1.简单工厂，抽象工厂
 2.反射的原理
 3.string为什么是final的
 4.spring mvc原理
