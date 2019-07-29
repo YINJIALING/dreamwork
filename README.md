@@ -58,7 +58,9 @@ java源文件-词法分析-语法分析-语义分析-生成字节流-字节流
 - 扩展加载源。比如从数据库、网络 ，甚至是电视机机顶盒进行加载。
 - 防止源码泄漏， java代码容易被编译和篡改，可以进行编译加密。 
 
-- 实现自定义加载器的步骤：定义一个classLoader继承classloader,重写findClass(),调用defineClass()
+- 实现自定义加载器的步骤：定义一个classLoader继承classloader,重写findClass(),调用defineClass()（没打破双亲委派，无法被父类加载器加载的类最终会通过这个方法被加载）
+
+如果想打破双亲委派模型则需要重写loadClass()方法（当然其中的坑也不会少）。典型的打破双亲委派模型的框架和中间件有tomcat与osgi。
 
 7.内存布局
 - heap
@@ -87,6 +89,18 @@ java源文件-词法分析-语法分析-语义分析-生成字节流-字节流
 - 使用其他数据库，如非关系型数据库
 - 不使用join语句比较多的sql,
 - 拆分临时表
+
+2.在SQL标准中，前三种隔离级别分别解决了幻象读、不可重复读和脏读的问题。那么，为什么MySQL使用可重复读作为默认隔离级别呢？
+首先，主从复制，是基于binlog复制的。binlog有几种
+statement:记录的是修改SQL语句
+row：记录的是每行实际数据的变更
+mixed：statement和row模式的混合
+那Mysql在5.0这个版本以前，binlog只支持STATEMENT这种格式！而这种格式在读已提交(Read Commited)这个隔离级别下主从复制是有bug的，因此Mysql将可重复读(Repeatable Read)作为默认的隔离级别。当在master上执行的顺序为先删后插！而此时binlog为STATEMENT格式，它记录的顺序为先插后删！从(slave)同步的是binglog，因此从机执行的顺序和主机不一致！就会出现主从不一致！
+如何解决？
+解决方案有两种！
+(1)隔离级别设为可重复读(Repeatable Read),在该隔离级别下引入间隙锁。当Session 1执行delete语句时，会锁住间隙。那么，Ssession 2执行插入语句就会阻塞住！
+(2)将binglog的格式修改为row格式，此时是基于行的复制，自然就不会出现sql执行顺序不一样的问题！奈何这个格式在mysql5.1版本开始才引入。
+
 
 ## Redis
 1 如何保证高可用？
