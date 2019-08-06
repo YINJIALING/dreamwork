@@ -1,5 +1,6 @@
 首先我是参考的一位大佬的github,这里给出连接，感谢他
 https://github.com/Snailclimb/JavaGuide
+https://github.com/jwasham/coding-interview-university/blob/master/translations/README-cn.md?utm_source=wechat_session&utm_medium=social&utm_oi=679309733035511808
 然后觉得有一些没有概括到，把增加的内容补充在这里
 ## java源码
 1.string为什么被设计为final类的？
