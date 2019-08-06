@@ -144,7 +144,8 @@ publisher确认机制，2种方式
 抽象工厂模式：增加了产品族的概念，如：要实现一个red的circle的实例,先创建shape接口和color接口，再创建circle实现shape接口以及red实现color接口，接着创建factory接口，redcirclefactory实现factory接口，他有2个方法分别是create和colored,用redcircle初始化完成。好处：提供了一个更加复杂的产品的构造。
 
 ## Linux文件系统
-- 
+1.虚拟内存 调度方式 存储地址变化方式
+2.文件系统
 还没弄清楚的问题
 2.反射的原理
 4.spring mvc原理
