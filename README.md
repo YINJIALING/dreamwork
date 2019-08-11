@@ -11,6 +11,20 @@ string.intern：若字符串存在返回常量池的引用。否则创建并返�
 2.反射forName和classLoader区别
 classLoader只是把类加载到内存中并不初始化(static代码块不被执行)；forName不仅把类加载到jvm中，还对类进行解释，执行了static方法
 
+3.对于null的理解
+
+不是对象，也不是类型。仅仅用于表示该对象没有指向的引用，用途：将某个对象置为null等待jvm去回收；
+用的时候需要注意：
+- 只能通过==和!=进行运算
+- 不能赋值给基本类型；只能赋值给引用类型
+
+4.map key is null
+hashmap:key,value都可以为null
+hashtable:key,value都不可以为null
+treemap:允许value是null,但不允许key 是 null
+linkedhashmap:同 hashmap
+concurrenthashmap:同hashtable(原因：因为hashtable和concurrenthashmap是线程安全的，假设支持，当使用get(key)返回null无法判断是真的value为null还是这个 key没作映射)
+
 ## 网络
 1.5层网络模型
 - 物理层：提供传输的物理介质
