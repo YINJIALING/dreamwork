@@ -19,11 +19,19 @@ classLoader只是把类加载到内存中并不初始化(static代码块不被�
 - 不能赋值给基本类型；只能赋值给引用类型
 
 4.map key is null
+
 hashmap:key,value都可以为null
+
 hashtable:key,value都不可以为null
+
 treemap:允许value是null,但不允许key 是 null
+
 linkedhashmap:同 hashmap
+
 concurrenthashmap:同hashtable(原因：因为hashtable和concurrenthashmap是线程安全的，假设支持，当使用get(key)返回null无法判断是真的value为null还是这个 key没作映射)
+
+5.异常处理
+所有的异常都是throwable的子类，分为error和exception。error出现标志着系统发生不可控的异常，如:stackflowerror, out of memory必须要人工介入。exception分为checked和unchecked.checked exception指的是在代码中需要显式处理的代码，如：classNotFoundException,sqlException. unchecked exception指的是运行时的异常，如:nullpointerException,indexoutboundsException
 
 ## 网络
 1.5层网络模型
@@ -130,6 +138,10 @@ mixed：statement和row模式的混合
 - 第二范式：非主属性完全依赖主属性。如：有一张选课记录表，字段有：姓名，年龄，课程名，学分，成绩，就不符合第二范式，因为对于同一个学生就有m门课，姓名和年龄重复了m-1次，对于同一门课有n个学生选，课程名和学分就重复了n-1次。符合第一二范式的做法是，拆分成3张表，学生表：姓名，年龄，学生id;课程表：课程id,课程名，学分；选课表：学生ID，课程 ID，成绩。这样的好处是：不用多次更新（假设要修改学分，则需要更新n-1条，更新异常；数据冗余；插入异常，如果想要存一门课程只有课程名和学分，无法插入）
 - 第3范式：主键不依赖其他非主属性。在一张部门表中，有部门id,部门名，简介等，员工表中有员工名，员工号，部门ID。员工表中就不能有其他部门的信息，否则会造成数据冗余
 
+4.慢查询explain显示什么
+相关问题：如何查看一个数据库是否用了索引
+思路：explain的关键字
+id(表的执行顺序，序号越大越优先执行，序号相同从上往下执行),select_type (查询类型，是否有子查询，简单查询simple),table,partitions,type(索引类型： const:返回一条数据，主键索引或唯一索引；eq_ref:唯一索引，返回一条数据;ref:非唯一性索引，返回多记录；range:范围查询，where后面sh是><between and,(最好不要提到in)；),possible_keys(可能用到的索引，不准确),key(实际用到的索引),key_len(索引的长度，用于判断索引是否全部被用到),ref,rows(实际通过索引查到的数据个数),filtered,extra
 ## Redis
 1 如何保证高可用？
 - 集群：拥有原生的集群机制(memcache没有)
@@ -174,11 +186,17 @@ publisher确认机制，2种方式
 - 段页式：段+页结合，兼容2者的优点。
 2.文件系统
 
+3. 进程和线程的区别
+举word的例子，然后总结
+- 进程有自己独立的内存，线程共享同一个进程的内存
+- 一个程序至少一个进程，一个进程至少一个线程
+- 进程通信比较困难，线程因为共享内存通信比较简单
+- 进程是cpu资源分配的最小单位，线程是cpu资源调度的最小单位
+
 
 还没弄清楚的问题
 1.一条sql的执行过程
-5.慢查询explain显示什么
-相关问题：如何查看一个数据库是否用了索引
+
 6.liunx指令
 7.事务是怎么用动态代理做的
 8.redis的分布式锁实现是基于什么的？单线程，多个线程竞争一把锁，谁竞争到谁先就先拥有锁
