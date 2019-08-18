@@ -38,7 +38,9 @@ concurrenthashmap:同hashtable(原因：因为hashtable和concurrenthashmap是�
 - 同步队列：一个先进先出的双向队列，分别用 head和tail标记头和尾，结点的类型是node。当线程获得临界资源失败便会把这个线程构造一个node加入这个队列，同时阻塞这个线程。直到临界资源释放，唤醒head.（node:一个node表示一个线程，还保存着线程的状态，线程的引用， prev,next）
 - conditionObject:实现等待通知机制。conditionObject实现了condition接口，给aqs提供条件变量的支持。与同步队列的关系：调用了await的线程会加入conditionObject等待队列中，并唤醒同步队列中的next节点。线程在某个conditionObject对象上调用了singal方法，等待队列中的firstWaiter会被加入到同步队列中，等待被唤醒。当线程调用unLock释放锁的时候，同步队列的header的下一个结点会被唤醒。
 与同步队列的区别：都是维护了一个单独等待的队列，结点类型都是node（node:一个node表示一个线程，还保存着线程的状态，线程的引用， nextWaiter）头和尾firstWaiter,lastWaiter
-- 独占锁与共享锁：
+- 独占锁与共享锁：独占锁：只有一个线程能进入临界资源，如：reentrantLock,分为公平锁和非公平锁。共享式：信号量，countdownlatch
+- 模版方法设计模式：在父类中定义一些步骤，具体执行放在子类中，使得子类可以在不改变结构的情况下，重新定义步骤。aqs定义的一些模版方法：tryRealese(独占，尝试释放资源),tryAcquire(独占尝试获取资源)，tryAcquireShared,tryrRealeseShared.
+- 自定义同步器的步骤：先确定是独占锁还是共享锁，定义state的含义，再定义一个类去继承aqs,重写对应的模版方法。
 
 ## 网络
 1.5层网络模型
