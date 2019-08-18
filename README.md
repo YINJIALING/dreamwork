@@ -33,6 +33,13 @@ concurrenthashmap:同hashtable(原因：因为hashtable和concurrenthashmap是�
 5.异常处理
 所有的异常都是throwable的子类，分为error和exception。error出现标志着系统发生不可控的异常，如:stackflowerror, out of memory必须要人工介入。exception分为checked和unchecked.checked exception指的是在代码中需要显式处理的代码，如：classNotFoundException,sqlException. unchecked exception指的是运行时的异常，如:nullpointerException,indexoutboundsException
 
+6.aqs抽象同步队列
+- violate state用于描述一个共享状态，判断当前是否能同步。要点：1.setState和getState用final修饰，限制aqs的子类重写这两个方法。2.用 cas的方法setstate,也是用final修饰
+- 同步队列：一个先进先出的双向队列，分别用 head和tail标记头和尾，结点的类型是node。当线程获得临界资源失败便会把这个线程构造一个node加入这个队列，同时阻塞这个线程。直到临界资源释放，唤醒head.（node:一个node表示一个线程，还保存着线程的状态，线程的引用， prev,next）
+- conditionObject:实现等待通知机制。conditionObject实现了condition接口，给aqs提供条件变量的支持。与同步队列的关系：调用了await的线程会加入conditionObject等待队列中，并唤醒同步队列中的next节点。线程在某个conditionObject对象上调用了singal方法，等待队列中的firstWaiter会被加入到同步队列中，等待被唤醒。当线程调用unLock释放锁的时候，同步队列的header的下一个结点会被唤醒。
+与同步队列的区别：都是维护了一个单独等待的队列，结点类型都是node（node:一个node表示一个线程，还保存着线程的状态，线程的引用， nextWaiter）头和尾firstWaiter,lastWaiter
+- 独占锁与共享锁：
+
 ## 网络
 1.5层网络模型
 - 物理层：提供传输的物理介质
